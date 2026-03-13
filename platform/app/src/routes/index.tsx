@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { routerBasename } from '../utils/publicUrl';
 import { useAppConfig } from '@state';
 import { history } from '../utils/history';
+import OpenFromServer from './Local/OpenFromServer';
 
 const NotFoundServer = ({
   message = 'Unable to query for studies at this time. Check your data source configuration or network connection',
@@ -86,6 +87,10 @@ const bakedInRoutes = [
   {
     path: `/localbasic`,
     children: Local.bind(null, { modePath: 'viewer/dicomlocal' }),
+  },
+  {
+    path: `/open`,
+    children: OpenFromServer,
   },
 ];
 
