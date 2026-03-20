@@ -36,56 +36,78 @@ export default function OpenFromServer() {
 
         const base = window.PUBLIC_URL?.replace(/\/$/, '') || '';
 
-        console.log(`[OpenFromServer] Fetching DICOM folder for docId: ${docId}`);
 
         const folderRes = await fetch(`${base}/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
           credentials: 'include',
         });
 
         if (!folderRes.ok) {
-          console.error('[OpenFromServer] Failed to fetch folder');
           navigate('/notfoundstudy');
           return;
         }
 
         const folderData = await folderRes.json();
 
-        if (!folderData.files || folderData.files.length === 0) {
-          console.error('[OpenFromServer] No files in folder');
+        if (folderData.type !== 'folder' || !folderData.files || folderData.files.length === 0) {
           navigate('/notfoundstudy');
           return;
         }
 
-        console.log(`[OpenFromServer] Received ${folderData.files.length} files from folder`);
+        // Download files individually
+        const files = [];
+        let downloaded = 0;
 
-        const files = folderData.files.map((fileInfo, index) => {
-          setProgress(Math.round(((index + 1) / folderData.files.length) * 100));
+        for (const fileName of folderData.files) {
+            const fileUrl = `${base}${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
 
-          const byteCharacters = atob(fileInfo.data);
-          const byteNumbers = new Array(byteCharacters.length);
+            const fileRes = await fetch(fileUrl, {
+                credentials: 'include',
+            });
 
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
+            if (fileRes.ok) {
+                const blob = await fileRes.blob();
 
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/dicom' });
+                const arrayBuffer = await blob.slice(0, 132).arrayBuffer();
+                const headerBytes = new Uint8Array(arrayBuffer);
+                const dicomHeader = String.fromCharCode(...headerBytes.slice(128, 132));
 
-          return new File([blob], fileInfo.fileName, {
-            type: 'application/dicom',
-            lastModified: Date.now()
-          });
-        });
+                //console.log(`[OpenFromServer] Arquivo ${fileName}: tamanho=${blob.size} bytes, header DICOM="${dicomHeader}"`);
 
+                if (dicomHeader !== 'DICM') {
+                    console.warn(`[OpenFromServer] ATENÇÃO: ${fileName} não é DICOM válido! Header: "${dicomHeader}"`);
+                }
+
+                if (blob.size === 0) {
+                    console.error(`[OpenFromServer] Arquivo vazio: ${fileName}`);
+                    continue;
+                }
+
+                files.push(new File([blob], fileName, { type: 'application/dicom' }));
+            } else {
+                console.error(`[OpenFromServer] Falha ao baixar ${fileName}: status ${fileRes.status}`);
+            }
+
+            downloaded++;
+            setProgress(Math.round((downloaded / folderData.files.length) * 100));
+        }
+
+        //console.log(`[OpenFromServer] ${files.length} arquivos baixados`);
+
+        if (files.length === 0) {
+          console.error('[OpenFromServer] Nenhum arquivo baixado');
+          navigate('/notfoundstudy');
+          return;
+        }
 
         const studies = await filesToStudies(files, dataSource);
 
         if (!studies?.length) {
-          console.error('[OpenFromServer] No studies created from files');
+          console.error('[OpenFromServer] Nenhum estudo criado');
           navigate('/notfoundstudy');
           return;
         }
 
+        //console.log(`[OpenFromServer] ${studies.length} estudos criados`);
 
         const query = new URLSearchParams();
         studies.forEach(id => {
@@ -96,7 +118,6 @@ export default function OpenFromServer() {
         navigate(`/viewer/dicomlocal?${decodeURIComponent(query.toString())}`);
 
       } catch (error) {
-        console.error('[OpenFromServer] Error loading DICOM folder:', error);
         navigate('/notfoundstudy');
       } finally {
         setLoading(false);
