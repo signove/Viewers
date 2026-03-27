@@ -34,10 +34,8 @@ export default function OpenFromServer() {
         const firstLocalDataSource = localDataSources[0];
         const dataSource = firstLocalDataSource.createDataSource({});
 
-        const base = window.PUBLIC_URL?.replace(/\/$/, '') || '';
 
-
-        const folderRes = await fetch(`${base}/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
+        const folderRes = await fetch(`/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
           credentials: 'include',
         });
 
@@ -58,7 +56,7 @@ export default function OpenFromServer() {
         let downloaded = 0;
 
         for (const fileName of folderData.files) {
-            const fileUrl = `${base}${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
+            const fileUrl = `${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
 
             const fileRes = await fetch(fileUrl, {
                 credentials: 'include',

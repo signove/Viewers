@@ -16,7 +16,7 @@ const DIST_DIR = path.join(__dirname, '../dist');
 const PUBLIC_DIR = path.join(__dirname, '../public');
 // ~~ Env Vars
 const HTML_TEMPLATE = process.env.HTML_TEMPLATE || 'index.html';
-const PUBLIC_URL = process.env.PUBLIC_URL || '/';
+const PUBLIC_URL = '/teleuti/dicomViewer/';
 const APP_CONFIG = process.env.APP_CONFIG || 'config/default.js';
 
 // proxy settings
@@ -99,7 +99,16 @@ module.exports = (env, argv) => {
             globOptions: {
               // Ignore our HtmlWebpackPlugin template file
               // Ignore our configuration files
-              ignore: ['**/config/**', '**/html-templates/**', '.DS_Store'],
+              ignore: ['**/config/**', '**/html-templates/**', '**/manifest.json', '.DS_Store'],
+            },
+          },
+          {
+            from: `${PUBLIC_DIR}/manifest.json`,
+            to: `${DIST_DIR}/manifest.json`,
+            transform(content) {
+              return content
+                .toString()
+                .replace(/"\/assets\//g, `"${PUBLIC_URL.replace(/\/$/, '')}/assets/`);
             },
           },
           {
