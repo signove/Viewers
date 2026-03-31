@@ -10,7 +10,6 @@ export default function OpenFromServer() {
   const { servicesManager } = useSystem();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-
   useEffect(() => {
     (async () => {
       const docId = params.get('docId');
@@ -35,7 +34,7 @@ export default function OpenFromServer() {
         const dataSource = firstLocalDataSource.createDataSource({});
 
 
-        const folderRes = await fetch(`/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
+        const folderRes = await fetch(`/proxy/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
           credentials: 'include',
         });
 
