@@ -2,7 +2,7 @@
 
 window.config = {
   name: 'config/default.js',
-  routerBasename: '/teleuti/dicomViewer',
+  routerBasename: '/proxy/teleuti/dicomViewer',
   showStudyList: true,
   defaultDataSourceName: 'dicomlocal',
   extensions: [],
