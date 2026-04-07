@@ -51,43 +51,48 @@ export default function OpenFromServer() {
         }
 
         // Download files individually
+        
         const files = [];
         let downloaded = 0;
 
-        for (const fileName of folderData.files) {
-            const fileUrl = `${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
+        const CONCURRENCY = 20;
 
-            const fileRes = await fetch(fileUrl, {
-                credentials: 'include',
+        async function downloadFile(fileName) {
+          const fileUrl = `${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
+
+          try {
+            const res = await fetch(fileUrl, {
+              credentials: 'include',
             });
 
-            if (fileRes.ok) {
-                const blob = await fileRes.blob();
+            if (!res.ok) return;
 
-                const arrayBuffer = await blob.slice(0, 132).arrayBuffer();
-                const headerBytes = new Uint8Array(arrayBuffer);
-                const dicomHeader = String.fromCharCode(...headerBytes.slice(128, 132));
+            const blob = await res.blob();
 
-                //console.log(`[OpenFromServer] Arquivo ${fileName}: tamanho=${blob.size} bytes, header DICOM="${dicomHeader}"`);
+            if (blob.size === 0) return;
 
-                if (dicomHeader !== 'DICM') {
-                    console.warn(`[OpenFromServer] ATENÇÃO: ${fileName} não é DICOM válido! Header: "${dicomHeader}"`);
-                }
+            const arrayBuffer = await blob.slice(0, 132).arrayBuffer();
+            const headerBytes = new Uint8Array(arrayBuffer);
+            const dicomHeader = String.fromCharCode(...headerBytes.slice(128, 132));
 
-                if (blob.size === 0) {
-                    console.error(`[OpenFromServer] Arquivo vazio: ${fileName}`);
-                    continue;
-                }
-
-                files.push(new File([blob], fileName, { type: 'application/dicom' }));
-            } else {
-                console.error(`[OpenFromServer] Falha ao baixar ${fileName}: status ${fileRes.status}`);
+            if (dicomHeader !== 'DICM') {
+              console.warn(`[OpenFromServer] ${fileName} não é DICOM`);
             }
 
+            files.push(new File([blob], fileName, { type: 'application/dicom' }));
+          } catch (err) {
+            console.error(`[OpenFromServer] erro ao baixar ${fileName}`, err);
+          } finally {
             downloaded++;
             setProgress(Math.round((downloaded / folderData.files.length) * 100));
+          }
         }
 
+        // executa em batches
+        for (let i = 0; i < folderData.files.length; i += CONCURRENCY) {
+          const chunk = folderData.files.slice(i, i + CONCURRENCY);
+          await Promise.all(chunk.map(downloadFile));
+        }
         //console.log(`[OpenFromServer] ${files.length} arquivos baixados`);
 
         if (files.length === 0) {
