@@ -3,7 +3,7 @@
 window.config = {
   name: 'config/default.js',
   routerBasename: '/proxy/teleuti/dicomViewer',
-  showStudyList: true,
+  showStudyList: false,
   defaultDataSourceName: 'dicomlocal',
   extensions: [],
   modes: [],
@@ -16,4 +16,9 @@ window.config = {
       },
     },
   ],
+  whiteLabeling: {
+    createLogoComponentFn: function(React) {
+      return React.createElement('div', {});
+    },
+  }
 };

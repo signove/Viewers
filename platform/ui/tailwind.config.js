@@ -29,23 +29,23 @@ module.exports = {
       },
 
       primary: {
-        light: '#5acce6',
-        main: '#0944b3',
-        dark: '#090c29',
-        active: '#348cfd',
+        light: '#9CA3AF',
+        main: '#6B7280',
+        dark: '#4B5563',
+        active: '#374151',
       },
       inputfield: {
-        main: '#3a3f99',
-        disabled: '#2b166b',
-        focus: '#5acce6',
-        placeholder: '#39383f',
+        main: '#6B7280',
+        disabled: '#9CA3AF',
+        focus: '#4B5563',
+        placeholder: '#9CA3AF',
       },
 
       secondary: {
-        light: '#3a3f99',
-        main: '#2b166b',
-        dark: '#041c4a',
-        active: '#1f1f27',
+        light: '#D1D5DB',
+        main: '#9CA3AF',
+        dark: '#6B7280',
+        active: '#4B5563',
       },
 
       indigo: {
@@ -55,9 +55,9 @@ module.exports = {
       common: {
         bright: '#e1e1e1',
         light: '#a19fad',
-        main: '#fff',
+        main: '#ffffff',
         dark: '#726f7e',
-        active: '#2c3074',
+        active: '#4B5563',
       },
       bkg: {
         low: '#050615',
@@ -69,9 +69,9 @@ module.exports = {
         secondary: '#7BB2CE',
       },
       actions: {
-        primary: '#348CFD',
-        highlight: '#5ACCE6',
-        hover: 'rgba(52, 140, 253, 0.2)',
+        primary: '#6B7280',
+        highlight: '#9CA3AF',
+        hover: 'rgba(107, 114, 128, 0.2)',
       },
       customgreen: {
         100: '#05D97C',
