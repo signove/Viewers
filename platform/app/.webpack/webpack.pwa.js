@@ -64,7 +64,7 @@ module.exports = (env, argv) => {
     output: {
       path: DIST_DIR,
       filename: isProdBuild ? '[name].bundle.[chunkhash].js' : '[name].js',
-      publicPath: PUBLIC_URL, // Used by HtmlWebPackPlugin for asset prefix
+      publicPath: 'auto', // Used by HtmlWebPackPlugin for asset prefix
       devtoolModuleFilenameTemplate: function (info) {
         if (isProdBuild) {
           return `webpack:///${info.resourcePath}`;
@@ -108,7 +108,7 @@ module.exports = (env, argv) => {
             transform(content) {
               return content
                 .toString()
-                .replace(/"\/assets\//g, `"${PUBLIC_URL.replace(/\/$/, '')}/assets/`);
+                .replace(/"\/assets\//g, `"/assets/`);
             },
           },
           {
@@ -133,22 +133,22 @@ module.exports = (env, argv) => {
         template: `${PUBLIC_DIR}/html-templates/${HTML_TEMPLATE}`,
         filename: 'index.html',
         templateParameters: {
-          PUBLIC_URL: PUBLIC_URL,
+          PUBLIC_URL: '',
         },
       }),
       // Generate a service worker for fast local loads
       ...(IS_COVERAGE
         ? []
         : [
-            new InjectManifest({
-              swDest: 'sw.js',
-              swSrc: path.join(SRC_DIR, 'service-worker.js'),
-              // Need to exclude the theme as it is updated independently
-              exclude: [/theme/],
-              // Cache large files for the manifests to avoid warning messages
-              maximumFileSizeToCacheInBytes: 1024 * 1024 * 50,
-            }),
-          ]),
+          new InjectManifest({
+            swDest: 'sw.js',
+            swSrc: path.join(SRC_DIR, 'service-worker.js'),
+            // Need to exclude the theme as it is updated independently
+            exclude: [/theme/],
+            // Cache large files for the manifests to avoid warning messages
+            maximumFileSizeToCacheInBytes: 1024 * 1024 * 50,
+          }),
+        ]),
     ],
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
@@ -183,7 +183,7 @@ module.exports = (env, argv) => {
       //writeToDisk: true,
       historyApiFallback: {
         disableDotRule: true,
-        index: PUBLIC_URL + 'index.html',
+        index: 'index.html',
       },
       devMiddleware: {
         writeToDisk: true,

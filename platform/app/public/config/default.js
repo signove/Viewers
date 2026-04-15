@@ -1,8 +1,14 @@
 /** @type {AppTypes.Config} */
 
+function getBasePath() {
+  var baseUrl = window.location.pathname.split("/").slice(0, -2).join("/") + "/";
+  return baseUrl;
+}
+
 window.config = {
   name: 'config/default.js',
-  routerBasename: '/proxy/teleuti/dicomViewer',
+  routerBasename: getBasePath() + "dicomViewer",
+  basePath: getBasePath(),
   showStudyList: false,
   defaultDataSourceName: 'dicomlocal',
   extensions: [],
@@ -17,7 +23,7 @@ window.config = {
     },
   ],
   whiteLabeling: {
-    createLogoComponentFn: function(React) {
+    createLogoComponentFn: function (React) {
       return React.createElement('div', {});
     },
   }

@@ -5,6 +5,7 @@ import { extensionManager } from '../../App';
 import filesToStudies from './filesToStudies';
 import pLimit from 'p-limit';
 
+const basePath = window.config?.basePath || '';
 export default function OpenFromServer() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -37,8 +38,8 @@ export default function OpenFromServer() {
         const firstLocalDataSource = localDataSources[0];
         const dataSource = firstLocalDataSource.createDataSource({});
 
-        setStatus('Listando arquivos...');
-        const folderRes = await fetch(`/proxy/teleuti/dicom/folder/${encodeURIComponent(docId)}`, {
+
+        const folderRes = await fetch(`${basePath}dicom/folder/${encodeURIComponent(docId)}`, {
           credentials: 'include',
         });
 
@@ -59,79 +60,79 @@ export default function OpenFromServer() {
         const CONCURRENCY = 10; // Máximo de downloads simultâneos
         const TIMEOUT_MS = 10000; // 10 segundos por arquivo
         const MAX_RETRIES = 2;
-        
+
         const files = [];
         let downloaded = 0;
         let failedFiles = 0;
-        
+
         const limit = pLimit(CONCURRENCY);
-        
+
         async function downloadFile(fileName, retryCount = 0) {
           const fileUrl = `${folderData.baseUrl}/${encodeURIComponent(fileName)}`;
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-          
+
           try {
             const res = await fetch(fileUrl, {
               credentials: 'include',
               signal: controller.signal
             });
             clearTimeout(timeoutId);
-            
+
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            
+
             const blob = await res.blob();
             if (blob.size === 0) throw new Error('Empty file');
-            
+
             const arrayBuffer = await blob.slice(0, 132).arrayBuffer();
             const headerBytes = new Uint8Array(arrayBuffer);
             const dicomHeader = String.fromCharCode(...headerBytes.slice(128, 132));
-            
+
             if (dicomHeader !== 'DICM') {
               console.warn(`[OpenFromServer] ${fileName} não é DICOM`);
             }
-            
+
             return new File([blob], fileName, { type: 'application/dicom' });
-            
+
           } catch (err) {
             clearTimeout(timeoutId);
-            
+
             if (err.name === 'AbortError') {
               console.warn(`[${fileName}] Timeout after ${TIMEOUT_MS}ms`);
             } else {
               console.warn(`[${fileName}] Error: ${err.message}`);
             }
-            
+
             if (retryCount < MAX_RETRIES) {
               const delay = 1000 * Math.pow(2, retryCount);
               console.log(`[${fileName}] Retry ${retryCount + 1} in ${delay}ms...`);
               await new Promise(r => setTimeout(r, delay));
               return downloadFile(fileName, retryCount + 1);
             }
-            
+
             return null;
           }
         }
-        
-        const downloadPromises = folderData.files.map(fileName => 
+
+        const downloadPromises = folderData.files.map(fileName =>
           limit(async () => {
             setStatus(`Baixando... ${Math.round((downloaded / totalFiles) * 100)}%`);
-            
+
             const file = await downloadFile(fileName);
-            
+
             if (file) {
               files.push(file);
             } else {
               failedFiles++;
             }
-            
+
             downloaded++;
             setProgress(Math.round((downloaded / totalFiles) * 100));
-            
+
             return file;
           })
         );
-        
+
         await Promise.allSettled(downloadPromises);
 
         if (files.length === 0) {
