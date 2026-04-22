@@ -217,6 +217,85 @@ module.exports = (env, argv) => {
   mergedConfig.watchOptions = {
     ignored: /node_modules\/@cornerstonejs/,
   };
+  mergedConfig.target = ['web', 'es5'];
+  mergedConfig.module = mergedConfig.module || {};
+  mergedConfig.module.rules = mergedConfig.module.rules || [];
+  mergedConfig.module.rules.push({
+    test: /\.js$/,
+    include: [
+      /node_modules\/@cornerstonejs/,
+      /node_modules\/cornerstone/,
+    ],
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              targets: {
+                chrome: '69',
+                android: '9',
+              },
+            },
+          ],
+        ],
+        plugins: [
+          '@babel/plugin-transform-optional-chaining',
+          '@babel/plugin-transform-nullish-coalescing-operator',
+          '@babel/plugin-transform-logical-assignment-operators',
+        ],
+      },
+    },
 
+  });
+
+  const transpileRule = {
+    test: /\.(js|mjs)$/,
+    include: /node_modules/,
+    exclude: [
+      /\.wasm\.js$/,
+      /ort-wasm/,
+      /onnxruntime/,
+      /wasm-factory/,
+      /simd/,
+      /codec/,
+      /OpenJPEG/,
+      /openjpeg/,
+      /charls/,
+      /libjpeg/,
+      /openjph/,
+      /worker/,
+      /Worker/,
+    ],
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              targets: {
+                chrome: '69',
+                android: '9',
+              },
+            },
+          ],
+        ],
+        plugins: [
+          '@babel/plugin-transform-optional-chaining',
+          '@babel/plugin-transform-nullish-coalescing-operator',
+          '@babel/plugin-transform-logical-assignment-operators',
+          '@babel/plugin-transform-class-static-block',
+          ['@babel/plugin-transform-class-properties', { loose: true }],
+          ['@babel/plugin-transform-private-methods', { loose: true }],
+        ],
+        compact: false,
+        cacheDirectory: true,
+      },
+    },
+  };
+
+  mergedConfig.module.rules.unshift(transpileRule);
   return mergedConfig;
 };

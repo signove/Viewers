@@ -93,39 +93,82 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
       warnings: true,
     },
     cache: {
-      type: 'filesystem',
+      type: 'memory',
     },
     module: {
       noParse: [/(dicomicc)/],
       rules: [
-        ...(isProdBuild
-          ? []
+        ...(IS_COVERAGE
+          ? [
+            {
+              test: /\.[jt]sx?$/,
+              exclude: /node_modules/,
+              use: {
+                loader: 'babel-loader',
+                options: {
+                  presets: ['@babel/preset-typescript', '@babel/preset-react'],
+                  plugins: ['istanbul'],
+                },
+              },
+            },
+          ]
           : [
-              ...(IS_COVERAGE
-                ? [
-                    {
-                      test: /\.[jt]sx?$/,
-                      exclude: /node_modules/,
-                      use: {
-                        loader: 'babel-loader',
-                        options: {
-                          presets: ['@babel/preset-typescript', '@babel/preset-react'],
-                          plugins: ['istanbul'],
-                        },
-                      },
+            {
+              test: /\.[jt]sx?$/,
+              exclude: /node_modules/,
+              loader: 'babel-loader',
+              options: {
+                plugins: isProdBuild ? [] : ['react-refresh/babel'],
+              },
+            },
+          ]),
+
+        {
+          test: /\.(js|mjs)$/,
+          include: /node_modules/,
+          exclude: [
+            /\.wasm\.js$/,
+            /ort-wasm/,
+            /onnxruntime/,
+            /wasm-factory/,
+            /simd/,
+            /codec/,
+            /OpenJPEG/,
+            /openjpeg/,
+            /charls/,
+            /libjpeg/,
+            /openjph/,
+            /[Ww]orker/,
+          ],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      chrome: '69',
+                      android: '9',
                     },
-                  ]
-                : [
-                    {
-                      test: /\.[jt]sx?$/,
-                      exclude: /node_modules/,
-                      loader: 'babel-loader',
-                      options: {
-                        plugins: isProdBuild ? [] : ['react-refresh/babel'],
-                      },
-                    },
-                  ]),
-            ]),
+                  },
+                ],
+              ],
+              plugins: [
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator',
+                '@babel/plugin-transform-logical-assignment-operators',
+                '@babel/plugin-transform-class-static-block',
+                ['@babel/plugin-transform-class-properties', { loose: true }],
+                ['@babel/plugin-transform-private-methods', { loose: true }],
+              ],
+              compact: false,
+              cacheDirectory: true,
+            },
+          },
+        },
+
+        // 3. SVG
         {
           test: /\.svg?$/,
           oneOf: [
@@ -139,9 +182,7 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
                         {
                           name: 'preset-default',
                           params: {
-                            overrides: {
-                              removeViewBox: false,
-                            },
+                            overrides: { removeViewBox: false },
                           },
                         },
                       ],
@@ -158,19 +199,18 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
             },
           ],
         },
+
         transpileJavaScriptRule(mode),
         loadWebWorkersRule,
-        // loadShadersRule,
+
         {
           test: /\.m?js/,
           resolve: {
             fullySpecified: false,
           },
         },
+
         cssToJavaScript,
-        // Note: Only uncomment the following if you are using the old style of stylus in v2
-        // Also you need to uncomment this platform/app/.webpack/rules/extractStyleChunks.js
-        // stylusToJavaScript,
         {
           test: /\.wasm/,
           type: 'asset/resource',
@@ -190,7 +230,7 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,
           type: 'asset/resource',
         },
-      ], //.concat(vtkRules),
+      ],
     },
     resolve: {
       mainFields: ['module', 'browser', 'main'],

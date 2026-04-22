@@ -4,19 +4,13 @@ function transpileJavaScript(mode) {
   const exclude =
     mode === 'production'
       ? excludeNodeModulesExcept([
-          // 'dicomweb-client',
-          // https://github.com/react-dnd/react-dnd/blob/master/babel.config.js
-          'react-dnd',
-          // https://github.com/dcmjs-org/dcmjs/blob/master/.babelrc
-          // https://github.com/react-dnd/react-dnd/issues/1342
-          // 'dcmjs', // contains: loglevelnext
-          // https://github.com/shellscape/loglevelnext#browser-support
-          // 'loglevelnext',
-          // https://github.com/dcmjs-org/dicom-microscopy-viewer/issues/35
-          // 'dicom-microscopy-viewer',
-          // https://github.com/openlayers/openlayers#supported-browsers
-          // 'ol', --> Should be fine
-        ])
+        'react-dnd',
+        '@cornerstonejs',
+        'itk-wasm',
+        '@kitware',
+        'date-fns',
+        '@radix-ui',
+      ])
       : excludeNodeModulesExcept([]);
 
   return {

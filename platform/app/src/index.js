@@ -1,10 +1,12 @@
 /**
  * Entry point for development and production PWA builds.
  */
+import 'core-js/stable/global-this';
 import 'regenerator-runtime/runtime';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import React from 'react';
+import 'core-js/stable';
 
 /**
  * EXTENSIONS AND MODES
