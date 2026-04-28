@@ -324,7 +324,9 @@ export const basicLayout = {
 };
 
 export function layoutTemplate() {
-  return structuredCloneWithFunctions(this.layoutInstance);
+  const layout = structuredCloneWithFunctions(this.layoutInstance);
+  layout.props.leftPanelClosed = window.innerWidth < 500;
+  return layout;
 }
 
 export const basicRoute = {

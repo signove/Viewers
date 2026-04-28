@@ -10,7 +10,7 @@ import {
   ToolButton,
 } from '../';
 import { IconPresentationProvider } from '@ohif/ui-next';
-
+import './style.css';
 import NavBar from '../NavBar';
 
 // Todo: we should move this component to composition and remove props base
@@ -60,7 +60,7 @@ function Header({
         isSticky={isSticky}
         {...props}
       >
-        <div className="relative h-[48px] items-center">
+        <div className="relative h-[48px] items-center" id='container-header'>
           <div className="absolute left-0 top-1/2 flex -translate-y-1/2 items-center">
             <div
               className={classNames(
@@ -77,10 +77,10 @@ function Header({
             </div>
           </div>
           <div className="absolute top-1/2 left-[250px] h-8 -translate-y-1/2">{Secondary}</div>
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform" id="container-tools">
             <div className="flex items-center justify-center space-x-2">{children}</div>
           </div>
-          <div className="absolute right-0 top-1/2 flex -translate-y-1/2 select-none items-center">
+          <div className="absolute right-0 top-1/2 flex -translate-y-1/2 select-none items-center" id="container-patientinfo">
             {UndoRedo}
             <div className="border-muted mx-1.5 h-[25px] border-r"></div>
             {PatientInfo}
