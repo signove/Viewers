@@ -10,21 +10,41 @@ window.config = {
   routerBasename: getBasePath() + "dicomViewer",
   basePath: getBasePath(),
   showStudyList: false,
-  defaultDataSourceName: 'dicomlocal',
-  extensions: [],
-  modes: [],
+  defaultDataSourceName: 'dicomweb',
+  hangingProtocolSettings: {
+    activeProtocolId: 'default',
+  },
   dataSources: [
     {
-      namespace: '@ohif/extension-default.dataSourcesModule.dicomlocal',
-      sourceName: 'dicomlocal',
+      name: 'config/default.js',
+      sourceName: 'dicomweb',
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
       configuration: {
-        friendlyName: 'Arquivos locais (arrastar e soltar)',
+        name: 'DICOM Server',
+        qidoRoot: `${getBasePath()}dicom`,
+        wadoRoot: `${getBasePath()}dicom`,
+        wadoUriRoot: `${getBasePath()}dicom/wado`,
+        qidoSupportsIncludeField: false,
+        supportsFuzzyMatching: false,
+        supportsWildcard: false,
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
+        //useSinglePartWADO: true,
+        requestOptions: {
+          requestCredentials: 'include',
+        },
+        dicomLoaderConfig: {
+          maxWebWorkers: navigator.hardwareConcurrency || 4,
+        }
       },
     },
-  ],
-  whiteLabeling: {
-    createLogoComponentFn: function (React) {
-      return React.createElement('div', {});
+    {
+      sourceName: 'dicomlocal',
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomlocal',
+      configuration: {},
     },
-  }
+  ],
+  extensions: [],
+  modes: [],
+  whiteLabeling: { createLogoComponentFn: (React) => React.createElement('div', {}) },
 };

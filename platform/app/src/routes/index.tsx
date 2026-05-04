@@ -15,6 +15,7 @@ import { routerBasename } from '../utils/publicUrl';
 import { useAppConfig } from '@state';
 import { history } from '../utils/history';
 import OpenFromServer from './Local/OpenFromServer';
+import OpenLazyLoading from './Local/OpenLazyLoading';
 
 const NotFoundServer = ({
   message = 'Unable to query for studies at this time. Check your data source configuration or network connection',
@@ -91,6 +92,10 @@ const bakedInRoutes = [
   {
     path: `/openViewer`,
     children: OpenFromServer,
+  },
+  {
+    path: `/openLazyViewer`,
+    children: OpenLazyLoading,
   },
 ];
 
