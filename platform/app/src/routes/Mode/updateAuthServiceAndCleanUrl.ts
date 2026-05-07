@@ -13,6 +13,16 @@ export function updateAuthServiceAndCleanUrl(
     return;
   }
 
+  // Create a URL object with the current location
+  const urlObj = new URL(window.location.origin + window.location.pathname + location.search);
+  const sessionId = urlObj.searchParams.get('s') || "";
+
+  document.cookie = [
+    `session-id=${encodeURIComponent(sessionId)}`,
+    'Path=/',
+    'Secure',
+    'SameSite=None',
+  ].join('; ');
   // if a token is passed in, set the userAuthenticationService to use it
   // for the Authorization header for all requests
   userAuthenticationService.setServiceImplementation({
@@ -21,8 +31,7 @@ export function updateAuthServiceAndCleanUrl(
     }),
   });
 
-  // Create a URL object with the current location
-  const urlObj = new URL(window.location.origin + window.location.pathname + location.search);
+
 
   // Remove the token from the URL object
   urlObj.searchParams.delete('token');
