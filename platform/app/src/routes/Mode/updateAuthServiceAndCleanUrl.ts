@@ -28,6 +28,7 @@ export function updateAuthServiceAndCleanUrl(
   userAuthenticationService.setServiceImplementation({
     getAuthorizationHeader: () => ({
       Authorization: 'Bearer ' + token,
+      "session-Id": sessionId,
     }),
   });
 
