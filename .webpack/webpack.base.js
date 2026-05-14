@@ -68,11 +68,10 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
     devtool: isProdBuild ? 'source-map' : 'cheap-module-source-map',
     entry: ENTRY,
     optimization: {
-      // splitChunks: {
-      //   // include all types of chunks
-      //   chunks: 'all',
-      // },
-      //runtimeChunk: 'single',
+      splitChunks: {
+        chunks: 'all',
+        maxSize: 1000000, // 1MB
+      },
       minimize: isProdBuild,
       sideEffects: false,
     },
@@ -278,7 +277,16 @@ module.exports = (env, argv, { SRC_DIR, ENTRY }) => {
     config.optimization.minimizer = [
       new TerserJSPlugin({
         parallel: true,
-        terserOptions: {},
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+            pure_funcs: ['console.log', 'console.debug'],
+          },
+          format: {
+            comments: false,
+          },
+        },
       }),
     ];
   }
