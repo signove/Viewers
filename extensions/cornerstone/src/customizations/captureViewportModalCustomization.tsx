@@ -53,6 +53,26 @@ function ViewportDownloadFormNew({
     };
   }, [onDisableViewport, onEnableViewport, viewportElement]);
 
+  function handleCopyToClipboard() {
+    var show = false // Only show the copy to clipboard option if the browser supports the Clipboard API
+    if (!show) return null;
+    return (
+      <FooterAction.Secondary
+        onClick={async () => {
+          try {
+            await onCopyToClipboard();
+            toast.success(t('Image copied to clipboard'));
+            onClose();
+          } catch (error) {
+            toast.error(t('Failed to copy image to clipboard'));
+            console.error('Failed to copy to clipboard:', error);
+          }
+        }}
+      >
+        {t('Copy to Clipboard')}
+      </FooterAction.Secondary>
+    );
+  }
   return (
     <ImageModal>
       <ImageModal.Body>
@@ -140,20 +160,7 @@ function ViewportDownloadFormNew({
               <FooterAction.Secondary onClick={onClose}>
                 {t('Common:Cancel')}
               </FooterAction.Secondary>
-              <FooterAction.Secondary
-                onClick={async () => {
-                  try {
-                    await onCopyToClipboard();
-                    toast.success(t('Image copied to clipboard'));
-                    onClose();
-                  } catch (error) {
-                    toast.error(t('Failed to copy image to clipboard'));
-                    console.error('Failed to copy to clipboard:', error);
-                  }
-                }}
-              >
-                {t('Copy to Clipboard')}
-              </FooterAction.Secondary>
+              {handleCopyToClipboard()}
               <FooterAction.Primary
                 onClick={() => {
                   onDownload(filename || DEFAULT_FILENAME, fileType);
