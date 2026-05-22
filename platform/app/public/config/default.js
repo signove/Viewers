@@ -10,6 +10,9 @@ window.config = {
   routerBasename: getBasePath() + "dicomViewer",
   basePath: getBasePath(),
   showStudyList: false,
+  investigationalUseDialog: {
+    option: 'never',
+  },
   defaultDataSourceName: 'dicomweb',
   hangingProtocolSettings: {
     activeProtocolId: 'default',
