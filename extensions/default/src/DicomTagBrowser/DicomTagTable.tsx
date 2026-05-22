@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import debounce from 'lodash.debounce';
 import { Row } from './DicomTagBrowser';
 import { Icons } from '@ohif/ui-next';
+import { useTranslation } from 'react-i18next';
 
 const lineHeightPx = 20;
 const lineHeightClassName = `leading-[${lineHeightPx}px]`;
@@ -72,6 +73,8 @@ const RowComponent = ({
 };
 
 function ColumnHeaders({ tagRef, vrRef, keywordRef, valueRef }) {
+  const { t } = useTranslation('DicomTagTable');
+
   return (
     <div
       className={classNames('bg-popover ohif-scrollbar flex w-full flex-row overflow-y-scroll')}
@@ -82,7 +85,7 @@ function ColumnHeaders({ tagRef, vrRef, keywordRef, valueRef }) {
           ref={tagRef}
           className="text-foreground flex flex-1 select-none flex-col pl-1 text-lg"
         >
-          <span className="flex flex-row items-center focus:outline-none">Tag</span>
+          <span className="flex flex-row items-center focus:outline-none">{t('Tag')}</span>
         </label>
       </div>
       <div className="w-2/24 px-3">
@@ -90,7 +93,7 @@ function ColumnHeaders({ tagRef, vrRef, keywordRef, valueRef }) {
           ref={vrRef}
           className="text-foreground flex flex-1 select-none flex-col pl-1 text-lg"
         >
-          <span className="flex flex-row items-center focus:outline-none">VR</span>
+          <span className="flex flex-row items-center focus:outline-none">{t('VR')}</span>
         </label>
       </div>
       <div className="w-6/24 px-3">
@@ -98,7 +101,7 @@ function ColumnHeaders({ tagRef, vrRef, keywordRef, valueRef }) {
           ref={keywordRef}
           className="text-foreground flex flex-1 select-none flex-col pl-1 text-lg"
         >
-          <span className="flex flex-row items-center focus:outline-none">Keyword</span>
+          <span className="flex flex-row items-center focus:outline-none">{t('Keyword')}</span>
         </label>
       </div>
       <div className="w-5/24 grow px-3">
@@ -106,7 +109,7 @@ function ColumnHeaders({ tagRef, vrRef, keywordRef, valueRef }) {
           ref={valueRef}
           className="text-foreground flex flex-1 select-none flex-col pl-1 text-lg"
         >
-          <span className="flex flex-row items-center focus:outline-none">Value</span>
+          <span className="flex flex-row items-center focus:outline-none">{t('Value')}</span>
         </label>
       </div>
     </div>

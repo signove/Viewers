@@ -7,13 +7,14 @@ import {
   DropdownMenuItem,
 } from '../DropdownMenu/DropdownMenu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../Tooltip';
+import { useTranslation } from 'react-i18next';
 
 export function StudyBrowserSort({ servicesManager }: withAppTypes) {
   // Todo: this should not be here, no servicesManager should be in ui-next, only
   // customization service
   const { customizationService, displaySetService } = servicesManager.services;
   const sortFunctions = customizationService.getCustomization('studyBrowser.sortFunctions');
-
+  const { t } = useTranslation('Common');
   const [selectedSort, setSelectedSort] = useState(sortFunctions[0]);
   const [sortDirection, setSortDirection] = useState('ascending');
 
@@ -86,7 +87,7 @@ export function StudyBrowserSort({ servicesManager }: withAppTypes) {
             )}
           </button>
         </TooltipTrigger>
-        <TooltipContent>Sort direction</TooltipContent>
+        <TooltipContent>{t('Sort direction')}</TooltipContent>
       </Tooltip>
     </div>
   );

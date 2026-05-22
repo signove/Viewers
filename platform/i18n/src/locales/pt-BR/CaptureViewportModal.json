@@ -1,0 +1,13 @@
+{
+  "Copy to Clipboard": "Copiar imagem",
+  "File name": "Nome do arquivo",
+  "Image size": "Tamanho da imagem",
+  "Image size in pixels": "Tamanho da imagem em pixels",
+  "Include annotations": "Incluir anotações",
+  "Include warning message": "Incluir mensagem de aviso",
+  "Width": "Largura",
+  "Height": "Altura",
+  "Save Image": "Salvar imagem",
+  "Image copied to clipboard": "Imagem copiada para a área de transferência",
+  "Failed to copy image to clipboard": "Falha ao copiar imagem para a área de transferência"
+}

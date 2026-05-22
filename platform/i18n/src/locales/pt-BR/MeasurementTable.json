@@ -1,4 +1,17 @@
 {
   "Export": "Exportar",
-  "Create Report": "Criar relatório"
+  "Create Report": "Criar relatório",
+  "Criteria nonconformities": "Não conformidades de critérios",
+  "Delete": "Deletar",
+  "Description": "Descrição",
+  "MAX": "Máximo",
+  "NonTargets": "Sem alvos",
+  "Relabel": "Renomear",
+  "Targets": "Alvos",
+  "Track measurements for this series?": "Rastrear medições para esta série?",
+  "No, do not ask again": "Não, não perguntar novamente",
+  "Measurements": "Medições",
+  "Export CSV": "Exportar CSV",
+  "No tracked measurements": "Sem medições rastreadas",
+  "Do you want to add this measurement to the existing report?": "Deseja adicionar esta medição ao relatório existente?"
 }

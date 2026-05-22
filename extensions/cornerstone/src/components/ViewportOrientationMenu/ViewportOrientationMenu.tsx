@@ -3,6 +3,7 @@ import { cn, Icons, useIconPresentation } from '@ohif/ui-next';
 import { useSystem } from '@ohif/core';
 import { Enums } from '@cornerstonejs/core';
 import { Popover, PopoverTrigger, PopoverContent, Button, useViewportGrid } from '@ohif/ui-next';
+import { useTranslation } from 'react-i18next';
 
 function ViewportOrientationMenu({
   location,
@@ -26,6 +27,7 @@ function ViewportOrientationMenu({
   const { cornerstoneViewportService, toolbarService } = servicesManager.services;
   const viewportInfo = cornerstoneViewportService.getViewportInfo(viewportId);
   const viewportOrientation = viewportInfo.getOrientation();
+  const { t } = useTranslation('Buttons');
 
   const [gridState] = useViewportGrid();
   const viewportIdToUse = viewportId || gridState.activeViewportId;
@@ -164,7 +166,7 @@ function ViewportOrientationMenu({
               <Icons.Checked className="text-primary h-6 w-6" />
             ) : null}
           </div>
-          <div className="flex-1 text-left">Axial</div>
+          <div className="flex-1 text-left">{t('Axial')}</div>
         </Button>
         <Button
           variant="ghost"
@@ -176,7 +178,7 @@ function ViewportOrientationMenu({
               <Icons.Checked className="text-primary h-6 w-6" />
             ) : null}
           </div>
-          <div className="flex-1 text-left">Sagittal</div>
+          <div className="flex-1 text-left">{t('Sagittal')}</div>
         </Button>
         <Button
           variant="ghost"
@@ -188,7 +190,7 @@ function ViewportOrientationMenu({
               <Icons.Checked className="text-primary h-6 w-6" />
             ) : null}
           </div>
-          <div className="flex-1 text-left">Coronal</div>
+          <div className="flex-1 text-left">{t('Coronal')}</div>
         </Button>
         <Button
           variant="ghost"
@@ -200,7 +202,7 @@ function ViewportOrientationMenu({
               <Icons.Checked className="text-primary h-6 w-6" />
             ) : null}
           </div>
-          <div className="flex-1 text-left">Acquisition</div>
+          <div className="flex-1 text-left">{t('Acquisition')}</div>
         </Button>
         {/* Divider */}
         <div className="border-input mx-1 my-2 border-t" />
@@ -214,7 +216,7 @@ function ViewportOrientationMenu({
               <Icons.Checked className="text-primary h-6 w-6" />
             ) : null}
           </div>
-          <div className="flex-1 text-left">Reformat</div>
+          <div className="flex-1 text-left">{t('Reformat')}</div>
         </Button>
       </PopoverContent>
     </Popover>
