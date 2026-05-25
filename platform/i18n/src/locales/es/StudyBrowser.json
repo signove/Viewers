@@ -2,5 +2,11 @@
   "Primary": "Primario",
   "Recent": "Reciente",
   "All": "Todos",
-  "Studies": "Estudios"
+  "Studies": "Estudios",
+  "Tag Browser": "Navegador de Etiquetas",
+  "Add as Layer": "Agregar como Capa",
+  "Series Number": "Número de Serie",
+  "Series Date": "Fecha de Serie",
+  "Thumbnail Double Click": "Doble Clic en Miniatura",
+  "The selected display sets could not be added to the viewport.": "Los conjuntos de visualización seleccionados no se pudieron agregar al viewport."
 }
