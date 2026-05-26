@@ -1,13 +1,47 @@
-/** @type {AppTypes.Config} */
-
 function getBasePath() {
-  var baseUrl = window.location.pathname.split("/").slice(0, -2).join("/") + "/";
-  return baseUrl;
+  const hostname = window.location.hostname;
+  const isLocalDev =
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname.includes('ngrok') ||
+    hostname.includes('localtunnel') ||
+    hostname.includes('trycloudflare'); // remover essas regras pra quando for subir pra production
+
+  if (isLocalDev) {
+    return '/proxy/teleuti/';
+  }
+
+  return 'https://proxy1.integrare.life/proxy/teleuti/';
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+const _t = urlParams.get('t') || '';
+const _s = urlParams.get('s') || '';
+
+const dicomBase = `${getBasePath()}dicom`;
+if (_t || _s) {
+  console.log("_st", _t, _s);
+  const originalOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url, ...args) {
+    let newUrl = url;
+    if (typeof url === 'string' && (url.includes('proxy1.integrare.life') || url.includes('/dicom/'))) {
+      const paramsToAppend = [];
+      if (_t && !newUrl.match(/[?&]t=/)) {
+        paramsToAppend.push(`t=${_t}`);
+      }
+      if (_s && !newUrl.match(/[?&]s=/)) {
+        paramsToAppend.push(`s=${_s}`);
+      }
+      if (paramsToAppend.length > 0) {
+        const separator = newUrl.includes('?') ? '&' : '?';
+        newUrl += `${separator}${paramsToAppend.join('&')}`;
+      }
+    }
+    return originalOpen.call(this, method, newUrl, ...args);
+  };
+}
 window.config = {
-  name: 'config/default.js',
-  routerBasename: getBasePath() + "dicomViewer",
+  routerBasename: '/',
   basePath: getBasePath(),
   showStudyList: false,
   defaultDataSourceName: 'dicomweb',
@@ -21,17 +55,20 @@ window.config = {
       namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
       configuration: {
         name: 'DICOM Server',
-        qidoRoot: `${getBasePath()}dicom`,
-        wadoRoot: `${getBasePath()}dicom`,
-        wadoUriRoot: `${getBasePath()}dicom/wado`,
+        qidoRoot: dicomBase,
+        wadoRoot: dicomBase,
+        wadoUriRoot: `${dicomBase}/wado`,
         qidoSupportsIncludeField: false,
         supportsFuzzyMatching: false,
         supportsWildcard: false,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',
-        //useSinglePartWADO: true,
         requestOptions: {
           requestCredentials: 'include',
+          params: {
+            t: _t,
+            s: _s,
+          },
         },
         dicomLoaderConfig: {
           maxWebWorkers: navigator.hardwareConcurrency || 4,

@@ -22,13 +22,14 @@ export function updateAuthServiceAndCleanUrl(
     'Path=/',
     'Secure',
     'SameSite=None',
+    "Partitioned"
   ].join('; ');
   // if a token is passed in, set the userAuthenticationService to use it
   // for the Authorization header for all requests
   userAuthenticationService.setServiceImplementation({
     getAuthorizationHeader: () => ({
       Authorization: 'Bearer ' + token,
-      "session-Id": sessionId,
+      "session-id": sessionId,
     }),
   });
 
