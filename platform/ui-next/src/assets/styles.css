@@ -20,6 +20,12 @@
   scrollbar-width: thin;
 }
 
+@media screen and (max-width: 1000px) {
+  .ohif-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+}
+
 .ohif-scrollbar::-webkit-scrollbar-track {
   @apply rounded;
 }

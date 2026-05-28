@@ -87,3 +87,37 @@ input[type='range'].scrollbarInput::-moz-range-track {
 .scrollbarInput:focus {
   outline: none;
 }
+
+@media screen and (max-width: 1000px) {
+  .scrollbarInner {
+    width: 24px;
+  }
+
+  .scrollbarInput {
+    left: 24px;
+    height: 24px;
+  }
+
+  /* Thumb styles for WebKit browsers */
+  input[type='range'].scrollbarInput::-webkit-slider-thumb {
+    height: 18px;
+    margin-top: -5px;
+    width: 48px;
+  }
+
+  /* Thumb styles for Firefox */
+  input[type='range'].scrollbarInput::-moz-range-thumb {
+    height: 18px;
+    width: 48px;
+  }
+
+  /* Track styles for WebKit browsers */
+  input[type='range'].scrollbarInput::-webkit-slider-runnable-track {
+    height: 8px;
+  }
+
+  /* Track styles for Firefox */
+  input[type='range'].scrollbarInput::-moz-range-track {
+    height: 4px;
+  }
+}
