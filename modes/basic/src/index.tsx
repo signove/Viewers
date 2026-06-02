@@ -80,25 +80,12 @@ export const extensionDependencies = {
   // Can derive the versions at least process.env.from npm_package_version
   '@ohif/extension-default': '^3.0.0',
   '@ohif/extension-cornerstone': '^3.0.0',
-  '@ohif/extension-cornerstone-dicom-sr': '^3.0.0',
-  '@ohif/extension-cornerstone-dicom-seg': '^3.0.0',
-  '@ohif/extension-cornerstone-dicom-pmap': '^3.0.0',
-  '@ohif/extension-cornerstone-dicom-rt': '^3.0.0',
-  '@ohif/extension-dicom-pdf': '^3.0.1',
-  '@ohif/extension-dicom-video': '^3.0.1',
 };
 
 export const sopClassHandlers = [
-  dicomvideo.sopClassHandler,
   dicomecg.sopClassHandler,
-  dicomSeg.sopClassHandler,
-  dicomPmap.sopClassHandler,
   ohif.sopClassHandler,
   ohif.wsiSopClassHandler,
-  dicompdf.sopClassHandler,
-  dicomsr.sopClassHandler3D,
-  dicomsr.sopClassHandler,
-  dicomRT.sopClassHandler,
 ];
 
 /**
@@ -277,7 +264,6 @@ export const toolbarSections = {
     'AdvancedMagnify',
     'UltrasoundDirectionalTool',
     'WindowLevelRegion',
-    'SegmentLabelTool',
   ],
 };
 
@@ -286,7 +272,7 @@ export const basicLayout = {
   props: {
     leftPanels: [ohif.thumbnailList],
     leftPanelResizable: true,
-    rightPanels: [cornerstone.segmentation, cornerstone.measurements],
+    rightPanels: [cornerstone.measurements],
     rightPanelClosed: true,
     rightPanelResizable: true,
     viewports: [
@@ -294,30 +280,9 @@ export const basicLayout = {
         namespace: cornerstone.viewport,
         displaySetsToDisplay: [
           ohif.sopClassHandler,
-          dicomvideo.sopClassHandler,
           ohif.wsiSopClassHandler,
           dicomecg.sopClassHandler,
         ],
-      },
-      {
-        namespace: dicomsr.viewport,
-        displaySetsToDisplay: [dicomsr.sopClassHandler, dicomsr.sopClassHandler3D],
-      },
-      {
-        namespace: dicompdf.viewport,
-        displaySetsToDisplay: [dicompdf.sopClassHandler],
-      },
-      {
-        namespace: dicomSeg.viewport,
-        displaySetsToDisplay: [dicomSeg.sopClassHandler],
-      },
-      {
-        namespace: dicomPmap.viewport,
-        displaySetsToDisplay: [dicomPmap.sopClassHandler],
-      },
-      {
-        namespace: dicomRT.viewport,
-        displaySetsToDisplay: [dicomRT.sopClassHandler],
       },
     ],
   },
@@ -339,7 +304,7 @@ export const modeInstance = {
   // TODO: We're using this as a route segment
   // We should not be.
   id,
-  routeName: 'basic',
+  routeName: 'viewer',
   // Don't hide this by default - see the registration later to hide the basic
   // instance by default.
   hide: false,

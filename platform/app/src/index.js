@@ -6,7 +6,29 @@ import 'regenerator-runtime/runtime';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import React from 'react';
-import 'core-js/stable';
+
+// 'core-js/stable' removed — babel.config.js already uses useBuiltIns:'usage' which injects only what's necessary.
+// Pass ?s=SESSION_ID in the worker URLs so that self.location.search has the session,
+// allowing the SessionAwareChunkPlugin to propagate the parameter in the sub-chunks via importScripts.
+(function () {
+  if (typeof window === 'undefined' || !window.Worker) return;
+  try {
+    var _s = new URLSearchParams(window.location.search).get('s');
+    if (!_s) return;
+    var _enc = encodeURIComponent(_s);
+    var _origWorker = window.Worker;
+    window.Worker = function (url, opts) {
+      var u = typeof url === 'string' ? url : url.toString();
+      if (u.indexOf('?s=') < 0 && u.indexOf('&s=') < 0 && !u.startsWith('blob:')) {
+        u = u + (u.indexOf('?') >= 0 ? '&' : '?') + 's=' + _enc;
+      }
+      return new _origWorker(u, opts);
+    };
+    window.Worker.prototype = _origWorker.prototype;
+  } catch (e) {
+    console.warn('[session-worker-patch]', e);
+  }
+})();
 
 /**
  * EXTENSIONS AND MODES

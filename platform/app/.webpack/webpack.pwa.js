@@ -10,6 +10,47 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+// Firefox does not send session cookies for dynamically loaded chunks within iframes
+// cross-site. This plugin injects ?s=SESSION_ID into the URLs of all chunks (main thread and workers)
+// so that the proxy can authenticate via query param instead of relying on the cookie.
+class SessionAwareChunkPlugin {
+  apply(compiler) {
+    compiler.hooks.thisCompilation.tap('SessionAwareChunkPlugin', (compilation) => {
+      const { RuntimeModule, RuntimeGlobals } = compiler.webpack;
+
+      class SessionRuntimeModule extends RuntimeModule {
+        constructor() {
+          super('session-aware-chunk-urls', RuntimeModule.STAGE_ATTACH);
+        }
+        generate() {
+          const getFilename = RuntimeGlobals.getChunkScriptFilename; // __webpack_require__.u
+          return (
+            '(function(){\n' +
+            '  var _loc = (typeof self!=="undefined"?self.location:typeof window!=="undefined"?window.location:null);\n' +
+            '  if(!_loc)return;\n' +
+            '  var _s=new URLSearchParams(_loc.search).get("s");\n' +
+            '  if(!_s)return;\n' +
+            '  var _e=encodeURIComponent(_s);\n' +
+            '  var _orig=' + getFilename + ';\n' +
+            '  ' + getFilename + '=function(id){\n' +
+            '    var u=_orig(id);\n' +
+            '    if(!u||u.indexOf("?s=")>=0||u.indexOf("&s=")>=0)return u;\n' +
+            '    return u+(u.indexOf("?")>=0?"&":"?")+"s="+_e;\n' +
+            '  };\n' +
+            '})();'
+          );
+        }
+      }
+
+      compilation.hooks.runtimeRequirementInTree
+        .for(RuntimeGlobals.ensureChunk)
+        .tap('SessionAwareChunkPlugin', (chunk) => {
+          compilation.addRuntimeModule(chunk, new SessionRuntimeModule());
+        });
+    });
+  }
+}
 // ~~ Directories
 const SRC_DIR = path.join(__dirname, '../src');
 const DIST_DIR = path.join(__dirname, '../dist');
@@ -149,6 +190,7 @@ module.exports = (env, argv) => {
             maximumFileSizeToCacheInBytes: 1024 * 1024 * 50,
           }),
         ]),
+      new SessionAwareChunkPlugin(),
     ],
     // https://webpack.js.org/configuration/dev-server/
     devServer: {

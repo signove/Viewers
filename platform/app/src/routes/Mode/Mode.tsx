@@ -89,16 +89,20 @@ export default function ModeRoute({
 
   useEffect(() => {
     const loadExtensions = async () => {
-      const loadedExtensions = await loadModules(Object.keys(extensions));
-      for (const extension of loadedExtensions) {
-        const { id: extensionId } = extension;
-        if (extensionManager.registeredExtensionIds.indexOf(extensionId) === -1) {
-          await extensionManager.registerExtension(extension);
+      try {
+        const loadedExtensions = await loadModules(Object.keys(extensions));
+        for (const extension of loadedExtensions) {
+          const { id: extensionId } = extension;
+          if (extensionManager.registeredExtensionIds.indexOf(extensionId) === -1) {
+            await extensionManager.registerExtension(extension);
+          }
         }
-      }
 
-      if (isMounted.current) {
-        setExtensionDependenciesLoaded(true);
+        if (isMounted.current) {
+          setExtensionDependenciesLoaded(true);
+        }
+      } catch (err) {
+        console.error('[Mode] Failed to load extension chunks:', err);
       }
     };
 
