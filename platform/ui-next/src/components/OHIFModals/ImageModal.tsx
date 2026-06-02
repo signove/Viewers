@@ -27,7 +27,7 @@ interface ImageBodyProps {
   className?: string;
 }
 function ImageBody({ children, className }: ImageBodyProps) {
-  return <div className={cn('flex flex-col sm:flex-row', className)}>{children}</div>;
+  return <div className={cn('flex flex-col lg:flex-row', className)}>{children}</div>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -46,7 +46,7 @@ function ImageVisual({ children, className }: ImageVisualProps) {
         className
       )}
     >
-      <div className="h-[512px] w-[512px] overflow-auto">{children}</div>
+      <div className="w-[512px] max-w-full overflow-auto" style={{ height: 'min(512px, 45vh)' }}>{children}</div>
     </div>
   );
 }
