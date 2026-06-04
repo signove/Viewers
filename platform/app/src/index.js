@@ -7,9 +7,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import React from 'react';
 
-// 'core-js/stable' removed — babel.config.js already uses useBuiltIns:'usage' which injects only what's necessary.
-// Pass ?s=SESSION_ID in the worker URLs so that self.location.search has the session,
-// allowing the SessionAwareChunkPlugin to propagate the parameter in the sub-chunks via importScripts.
+// 'core-js/stable' removed babel useBuiltIns:'usage' already injects what's needed.
+// Add ?s=SESSION_ID to worker URLs so SessionAwareChunkPlugin can read it from self.location.
 (function () {
   if (typeof window === 'undefined' || !window.Worker) return;
   try {
