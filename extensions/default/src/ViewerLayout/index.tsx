@@ -150,17 +150,14 @@ function ViewerLayout({
   const viewportComponents = viewports.map(getViewportComponentData);
 
   return (
-    <div>
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <ViewerHeader
         hotkeysManager={hotkeysManager}
         extensionManager={extensionManager}
         servicesManager={servicesManager}
         appConfig={appConfig}
       />
-      <div
-        className="relative flex w-full flex-row flex-nowrap items-stretch overflow-hidden bg-background"
-        style={{ height: 'calc(100vh - 52px' }}
-      >
+      <div className="relative flex w-full min-h-0 flex-1 flex-row flex-nowrap items-stretch overflow-hidden bg-background">
         <React.Fragment>
           {showLoadingIndicator && <LoadingIndicatorProgress className="h-full w-full bg-background" />}
           <ResizablePanelGroup {...resizablePanelGroupProps}>
